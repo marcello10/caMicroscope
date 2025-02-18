@@ -37,4 +37,4 @@ jobs:
       
       - name: Set output status to warning (if test fails)
         if: steps.axe-test.outputs.status == 'warning'
-        run: echo "Accessibility tests failed, but this is an aspirational test and does not block the PR."
+        run: echo "::warning Accessibility tests failed, but this does not block (most) PRs."
