@@ -81,7 +81,7 @@ function xml2geo() {
       },
       'bound': {
         'type': 'BoundingBox',
-        'coordinates': [[minX, minY], [maxX, maxY]],
+        'coordinates': [boundRect],
       },
     };
 
