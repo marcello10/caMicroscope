@@ -23,11 +23,11 @@ var template = {
   },
 };
 
-var aperio_map = {
-  "0":"Polygon",
-  "1":"Polygon",
-  "2":"Polygon", // rectangle but should work?? haven't seen one yet
-  "4": "Polyline"
+var aperioMap = {
+  '0': 'Polygon',
+  '1': 'Polygon',
+  '2': 'Polygon', // rectangle but should work?? haven't seen one yet
+  '4': 'Polyline',
 };
 
 function xml2geo() {
@@ -35,19 +35,19 @@ function xml2geo() {
   let input = document.getElementById('xml_in').value;
   xmlDoc = parser.parseFromString(input, 'text/xml');
   let annotations = xmlDoc.getElementsByTagName('Annotation'); // Assuming regions are inside 'Annotation' elements
-  
+
   for (let annotation of annotations) {
-    let annotationType = annotation.getAttribute('Type') || '0';  // Default to '0' if Type is not provided
-    let annotationLineColor = annotation.getAttribute('LineColor');  // Get LineColor from the parent annotation
+    let annotationType = annotation.getAttribute('Type') || '0'; // Default to '0' if Type is not provided
+    let annotationLineColor = annotation.getAttribute('LineColor'); // Get LineColor from the parent annotation
     let annotationId = annotation.getAttribute('Id');
-    
+
     console.log('Processing Annotation ID:', annotationId, 'with Type:', annotationType);
 
-    let regions = annotation.getElementsByTagName('Region');  // Get regions within this annotation
+    let regions = annotation.getElementsByTagName('Region'); // Get regions within this annotation
     for (let region of regions) {
       let regionId = region.getAttribute('Id');
       regionType = annotationType || region.getAttribute('Type'); // parent annotation type if present, else own (odd?)
-      regionType = aperio_map[regionType]
+      regionType = aperioMap[regionType];
       console.log('Processing Region ID:', regionId, 'as', regionType);
 
       let vertices = region.getElementsByTagName('Vertex');
@@ -84,7 +84,7 @@ function xml2geo() {
         'properties': {
           'regionId': regionId,
           'lineColor': hexColor,
-          'style':{
+          'style': {
             'color': hexColor,
             'isFill': isFill,
           },
