@@ -27,7 +27,7 @@ var aperio_map = {
   "0":"Polygon",
   "1":"Polygon",
   "2":"Polygon", // rectangle but should work?? haven't seen one yet
-  "4": "LineString"
+  "4": "Polyline"
 };
 
 function xml2geo() {
