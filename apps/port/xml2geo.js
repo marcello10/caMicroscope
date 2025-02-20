@@ -23,6 +23,13 @@ var template = {
   },
 };
 
+var aperio_map = {
+  "0":"Polygon",
+  "1":"Polygon",
+  "2":"Polygon", // rectangle but should work?? haven't seen one yet
+  "4": "LineString"
+};
+
 function xml2geo() {
   let features = [];
   let input = document.getElementById('xml_in').value;
@@ -31,7 +38,9 @@ function xml2geo() {
 
   for (let i of regions) {
     let regionId = i.getAttribute('Id');
-    let regionType = i.getAttribute('Type') || 'Polygon'; // Default to Polygon if Type is missing
+    let regionType = i.getAttribute('Type') || '0'; 
+    regionType = aperio_map[regionType] || 'Polygon';// Default to Polygon if Type is missing
+
     console.log('Processing Region ID:', regionId, 'as', regionType);
 
     let vertices = i.getElementsByTagName('Vertex');
