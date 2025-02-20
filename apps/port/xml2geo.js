@@ -28,14 +28,16 @@ function xml2geo() {
   let input = document.getElementById('xml_in').value;
   xmlDoc = parser.parseFromString(input, 'text/xml');
   let regions = xmlDoc.getElementsByTagName('Region');
+
   for (let i of regions) {
-    console.log('Looking at Region ID', i.getAttribute('Id'));
+    let regionId = i.getAttribute('Id');
+    let regionType = i.getAttribute('Type') || 'Polygon'; // Default to Polygon if Type is missing
+    console.log('Processing Region ID:', regionId, 'as', regionType);
+
     let vertices = i.getElementsByTagName('Vertex');
     let coordinates = [];
-    let minX = 99e99;
-    let maxX = 0;
-    let minY = 99e99;
-    let maxY = 0;
+    let minX = 99e99; let maxX = 0; let minY = 99e99; let maxY = 0;
+
     for (let j of vertices) {
       let x = parseFloat(j.getAttribute('X'));
       let y = parseFloat(j.getAttribute('Y'));
@@ -45,18 +47,38 @@ function xml2geo() {
       maxY = Math.max(maxY, y);
       coordinates.push([x, y]);
     }
-    coordinates.push(coordinates[0]);
+
+    // **Detect Polygon vs. Polyline**
+    if (regionType === 'Polygon') {
+      coordinates.push(coordinates[0]); // Close the polygon by repeating the first point
+    }
+
     let boundRect = [[minX, minY], [minX, maxY], [maxX, maxY], [maxX, minY], [minX, minY]];
-    let feature = {};
-    feature['type'] = 'Feature';
-    feature['geometry'] = {};
-    feature['geometry']['type'] = 'Polygon';
-    feature['geometry']['coordinates'] = [coordinates];
-    feature['bound'] = {};
-    feature['bound']['type'] = 'Polygon';
-    feature['bound']['coordinates'] = [boundRect];
+
+    // **Detect Color**
+    let colorValue = i.getAttribute('LineColor');
+    let hexColor = colorValue ? `#${parseInt(colorValue).toString(16).padStart(6, '0')}` : '#000000';
+
+    let feature = {
+      'type': 'Feature',
+      'geometry': {
+        'type': regionType === 'Polyline' ? 'LineString' : 'Polygon',
+        'coordinates': [coordinates],
+      },
+      'properties': {
+        'regionId': regionId,
+        'lineColor': hexColor,
+        'group': i.parentNode.getAttribute('Name') || 'Ungrouped',
+      },
+      'bound': {
+        'type': 'BoundingBox',
+        'coordinates': [[minX, minY], [maxX, maxY]],
+      },
+    };
+
     features.push(feature);
   }
+
   let output = Object.assign({}, template);
   output['geometries']['features'] = features;
   output['provenance']['image']['slide'] = document.getElementById('slide_id').value;
@@ -64,5 +86,6 @@ function xml2geo() {
   output['properties']['annotations']['name'] = document.getElementById('annot_name').value;
   output['provenance']['analysis']['name'] = document.getElementById('annot_name').value;
   output['provenance']['analysis']['execution_id'] = document.getElementById('annot_name').value;
-  document.getElementById('output').innerHTML = JSON.stringify(output);
+
+  document.getElementById('output').textContent = JSON.stringify(output);
 }
