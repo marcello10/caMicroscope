@@ -63,10 +63,11 @@ function xml2geo() {
         maxY = Math.max(maxY, y);
         coordinates.push([x, y]);
       }
-
+      let isFill = false;
       // **Detect Polygon vs. Polyline**
       if (regionType === 'Polygon') {
         coordinates.push(coordinates[0]); // Close the polygon by repeating the first point
+        isFill = true;
       }
 
       let boundRect = [[minX, minY], [minX, maxY], [maxX, maxY], [maxX, minY], [minX, minY]];
@@ -83,6 +84,10 @@ function xml2geo() {
         'properties': {
           'regionId': regionId,
           'lineColor': hexColor,
+          'style':{
+            'color': hexColor,
+            'isFill': isFill,
+          },
           'group': region.parentNode.getAttribute('Name') || 'Ungrouped',
         },
         'bound': {
