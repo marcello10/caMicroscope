@@ -202,24 +202,27 @@ async function initUIcomponents() {
     `,
   });
 
-  // Create infoModal to show information about models uploaded.
+  // Cria o Modal para exibir informações de ajuda.
   $UI.helpModal = new ModalBox({
-    id: 'help',
+    id: 'help', // ID do elemento HTML
     hasHeader: true,
-    headerText: 'Help',
+    headerText: 'Help', // Texto do cabeçalho
     hasFooter: false,
-  });
-  // Create Modal to take input from user of new class list
-  $UI.chngClassLst = new ModalBox({
-    id: 'chngClass',
-    hasHeader: true,
-    headerText: 'Help',
-    hasFooter: false,
+    // O conteúdo será definido dinamicamente na função openHelp
   });
 
-  // Create roiExtract for taking details of ROI extraction
+  // Cria o Modal para permitir ao utilizador inserir uma nova lista de classes para um modelo.
+  $UI.chngClassLst = new ModalBox({
+    id: 'chngClass', // ID do elemento HTML
+    hasHeader: true,
+    headerText: 'Change Class List', // Texto do cabeçalho (corrigido)
+    hasFooter: false,
+    // O conteúdo será definido dinamicamente na função showNewClassInput
+  });
+
+  // Cria o Modal para selecionar o modelo a ser usado na extração de ROI.
   $UI.roiModal = new ModalBox({
-    id: 'roi_panel',
+    id: 'roi_panel', // ID do elemento HTML
     hasHeader: true,
     headerText: 'ROI Extraction', // Texto do cabeçalho
     hasFooter: false,
